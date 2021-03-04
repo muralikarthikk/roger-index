@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+#set -x
+set -e
+
+namespace=${NAMESPACE:-}
+release=${RELEASE:-roger}
+image_repository=${REDIS_IMAGE:-redislabs/redisgraph}
+image_tag=${REDIS_IMAGE_TAG:-2.2.13}
+cluster_domain=${CLUSTER_DOMAIN:-cluster.local}
+redis_worker_count=${REDIS_WORKER_COUNT:-1}
+branch=${WORKING_GIT_BRANCH:-indexing-and-integration}
+
+# https://github.com/bitnami/charts/tree/master/bitnami/redis
+init () {
+    helm dependency update ../helm
+}
+start () {
+  helm upgrade --install $release \
+  --set redis.clusterDomain=$cluster_domain \
+  --set airflow.airflow.config.AIRFLOW__KUBERNETES__GIT_BRANCH=$branch \
+  --set airflow.dags.git.ref=$branch \
+  --namespace=$namespace \
+  ../helm
+}
+stop () {
+    helm delete $release \
+	 --namespace=$namespace
+}
+restart () {
+    stop
+    start
+}
+status () {
+  helm --namespace=$namespace status $release
+}
+client () {
+    redis-cli -h 127.0.0.1 -p 6379 -a $REDIS_PASSWORD
+}
+#----------------------------
+
+
+
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export ROGER_HOME=$( dirname $DIR )
+export DATA_HOME=$ROGER_HOME/roger/data
+export PYTHONPATH=$ROGER_HOME:$ROGER_HOME/../kgx
+export DB_NAME=test
+
+roger () {
+    python $ROGER_HOME/roger/core.py $*
+}
+
+kgx () {
+    get () {
+	time roger --get-kgx $*
+    }
+    merge () {
+	time roger --merge-kgx $*
+    }
+    schema () {
+	time roger --create-schema $*
+    }
+    clean () {
+	schema () {
+	    rm -rf $DATA_HOME/schema
+	}
+	cache () {
+	    rm -rf $DATA_HOME/kgx
+	}
+	merge () {
+	    rm -rf $DATA_HOME/merge
+	}
+	all () {
+	    schema
+	    cache
+	    merge
+	}
+	$*
+    }
+    $*
+}
+
+bulk () {
+    create () {
+	time roger --create-bulk $*
+    }
+    load () {
+	time roger --insert $*
+    }
+    validate () {
+	roger --validate $*
+    }
+    clean () {
+	rm -rf $DATA_HOME/bulk
+    }
+    $*
+}
+
+query () {
+    query="$1"
+    echo "$query"
+    time redis-cli GRAPH.QUERY $DB_NAME "$query"
+}
+
+all () {
+    kgx clean all
+    bulk clean
+    kgx get
+    kgx merge
+    kgx schema
+    bulk create
+    bulk load
+    validate
+}
+
+$*
+
+exit 0
+
+

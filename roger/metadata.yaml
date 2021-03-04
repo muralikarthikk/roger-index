@@ -1,0 +1,17 @@
+versions:
+- files:
+  - biolink.json
+  - ctd.json
+  - gtopdb.json
+  - hetio.json
+  - hgnc.json
+  - hmdb.json
+  - kegg.json
+  - mychem.json
+  - ontological-hierarchy.json
+  - panther.json
+  version: v1.0
+- version: test
+  files:
+  - panther.json
+

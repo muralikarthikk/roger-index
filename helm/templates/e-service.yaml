@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: elasticsearch
+  name: e-service
+  namespace: muralikarthik-k
+spec:
+  clusterIP: 10.233.57.177
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: 9200
+  selector:
+    run: elasticsearch
+  sessionAffinity: None
+  type: ClusterIP

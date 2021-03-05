@@ -42,8 +42,8 @@ airflow:
     ## the airflow executor type to use
     ##
     image:
-      repository: muralikarthikk/air-task
-      tag: "0.0.3"
+      repository: muralikarthikk/task-new
+      tag: "0.0.1"
     #  executor: CeleryExecutor
     executor: KubernetesExecutor
 
@@ -69,8 +69,8 @@ airflow:
       AIRFLOW__KUBERNETES__DAGS_VOLUME_SUBPATH: "roger"
       AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "FALSE"
       # @TODO change to helxplatform docker repo
-      AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: "muralikarthikk/air-task"
-      AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: "0.0.3"
+      AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: "muralikarthikk/task-new"
+      AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: "0.0.1"
       # DAGS
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
 

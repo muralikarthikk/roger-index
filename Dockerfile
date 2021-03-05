@@ -5,14 +5,8 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN pip uninstall -y elasticsearch-dsl
+RUN pip uninstall -y bmt
+RUN pip install git+git://github.com/patrickkwang/biolink-model-toolkit@master#egg=bmt
 RUN rm -f requirements.txt
-RUN chmod 777 /opt/airflow/dags
-RUN chown -R airflow:airflow /opt/airflow/dags
 ENV PYTHONPATH=$PYTHONPATH:/opt/airflow/dags/
 USER airflow
-
-
-
-
-
-

@@ -285,7 +285,7 @@ class Dug:
         index_config = Dug.config.get("indexing")
         tranql_url = index_config["tranql_endpoint"]
         graph_name = Dug.config["redisgraph"]["graph"]
-        source = f"redis:{graph_name}"
+        source = f"roger-redis-master:{graph_name}"
         queries_config = index_config["queries"]
         tranql_queries = {
             key: tql.QueryFactory(queries_config[key], source)

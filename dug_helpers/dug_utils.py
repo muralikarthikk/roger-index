@@ -41,6 +41,7 @@ class Dug:
             # Dug search expects these to be set as os envrion
             # Elastic config
             elastic_conf = config.get("elastic_search")
+            log.debug(f"--------------------------------> {elastic_conf}, {elastic_conf.get('host')}")
             os.environ['ELASTIC_API_HOST']  =  elastic_conf.get("host")
             os.environ['ELASTIC_USERNAME'] =  elastic_conf.get("username")
             os.environ['ELASTIC_PASSWORD'] = elastic_conf.get("password")

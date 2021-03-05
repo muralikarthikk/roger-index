@@ -46,6 +46,7 @@ class Dug:
             os.environ['ELASTIC_USERNAME'] =  elastic_conf.get("username")
             os.environ['ELASTIC_PASSWORD'] = elastic_conf.get("password")
             os.environ['NBOOST_API_HOST'] = elastic_conf.get("nboost_host")
+            log.debug(f"--------------------------------> {os.environ.get('ELASTIC_API_HOST', 'localhost')}")
             Dug.search_obj = Search("e-service")
 
     def __enter__(self):
